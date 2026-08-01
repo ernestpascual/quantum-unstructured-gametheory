@@ -133,12 +133,69 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 ### Endpoint: `POST /analyze_game`
 
-#### Request Body
+#### Request Body Parameters
+- `text` *(string, required)*: The game theory scenario description.
+- `api_key` *(string, required)*: API key for the chosen AI provider.
+- `provider` *(string, optional)*: `"OpenRouter"` (default), `"Google AI Studio"`, or `"OpenAI"`.
+- `model` *(string, optional)*: Model override name (e.g., `gpt-4o`, `gemini-1.5-pro`).
+
 ```json
 {
+  "text": "Two prisoners are arrested for a crime...",
   "api_key": "sk-or-v1-...",
-  "text": "Two prisoners are arrested for a crime..."
+  "provider": "OpenRouter",
+  "model": ""
 }
+```
+
+### 💻 How to Call from External Frontends
+
+#### 1. JavaScript / Next.js / React (`fetch`)
+```javascript
+const analyzeGame = async () => {
+  const response = await fetch("https://your-app.up.railway.app/analyze_game", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      text: "Two criminals are arrested by the police...",
+      api_key: "sk-or-v1-...",
+      provider: "OpenRouter" // "OpenRouter" | "Google AI Studio" | "OpenAI"
+    })
+  });
+
+  const result = await response.json();
+  console.log(result.markdown_response);
+  console.log(result.processed_json);
+};
+```
+
+#### 2. cURL
+```bash
+curl -X POST "https://your-app.up.railway.app/analyze_game" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Two suspects are arrested for a robbery...",
+    "api_key": "sk-or-v1-...",
+    "provider": "OpenRouter"
+  }'
+```
+
+#### 3. Python (`requests`)
+```python
+import requests
+
+response = requests.post(
+    "https://your-app.up.railway.app/analyze_game",
+    json={
+        "text": "Two criminals are arrested by police...",
+        "api_key": "sk-or-v1-...",
+        "provider": "OpenRouter"
+    }
+)
+data = response.json()
+print(data["markdown_response"])
 ```
 
 #### Response (Valid Game Theory Problem)
@@ -164,7 +221,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 #### Response (Non-Game Theory Problem)
 ```json
-"this is not game theory problem."
+"this is not game theory problem. Tip: Make sure to clearly define the players, their decisions/actions, and the payoff impact of those decisions."
 ```
 
 ---
