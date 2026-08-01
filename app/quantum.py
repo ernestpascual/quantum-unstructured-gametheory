@@ -124,7 +124,8 @@ def build_multi_qubit_w_circuit(n_players: int, qubits_per_player: List[int]) ->
 
 def decode_quantum_counts_to_player_actions(counts: dict, schema: GameTheorySchema, qubits_per_player: List[int]) -> dict:
     """
-    Decodes measurement bitstrings into player action tuples and calculates action probabilities.
+    Decodes measurement bitstrings into player action tuples with explicit player labels.
+    Example: "Player 1 (Alice): Cooperate, Player 2 (Bob): Defect"
     """
     action_counts = {}
     total_shots = sum(counts.values())
@@ -135,7 +136,6 @@ def decode_quantum_counts_to_player_actions(counts: dict, schema: GameTheorySche
         
         player_actions = []
         offset = 0
-        valid_action = True
         
         for p_idx, q_count in enumerate(qubits_per_player):
             p_bits = rev_bits[offset : offset + q_count]
@@ -143,10 +143,11 @@ def decode_quantum_counts_to_player_actions(counts: dict, schema: GameTheorySche
             player = schema.players[p_idx]
             
             if action_idx < len(player.actions):
-                player_actions.append(player.actions[action_idx])
+                chosen_action = player.actions[action_idx]
             else:
-                # If bit value exceeds action list size, wrap modulo action length
-                player_actions.append(player.actions[action_idx % len(player.actions)])
+                chosen_action = player.actions[action_idx % len(player.actions)]
+                
+            player_actions.append(f"{player.name}: {chosen_action}")
             offset += q_count
             
         joint_action_key = ", ".join(player_actions)

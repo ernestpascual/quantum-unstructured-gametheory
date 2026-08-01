@@ -237,7 +237,9 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
        - **Players & Decisions**: Explicitly list all participating players (2 to 5) and ALL available action/decision choices for each player (up to 5 actions per player).
        - **Complete Classical Payoff Matrix**: Render a clear, comprehensive markdown table showing ALL joint action combinations and the resulting payoff vector for each player.
     
-    2. **EWL Quantum Strategy & Probability Analysis**: An analysis mapping the resulting EWL probability distribution back to specific multi-player action choices.
+    2. **EWL Quantum Strategy & Probability Analysis**:
+       - Render a markdown table for the Probability Map & Strategy Distribution.
+       - **CRITICAL**: In the Joint Action / Strategy column, explicitly label WHICH player executes each specific action (e.g. `Alice: Cooperate, Bob: Defect` or `Player 1: Bid High, Player 2: Pass`). Do not output unlabelled raw action pairs.
     
     3. **Quantum Nash Equilibrium & Insights**: 
        Explain this section in simple, intuitive terms by breaking it down into 3 clear subsections:
