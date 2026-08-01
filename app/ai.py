@@ -178,31 +178,41 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
 
     if mode == "winning":
         insights_prompt = f"""
-    You are a practical quantum game theory consultant who excels at giving clear, actionable business and strategic advice without heavy mathematical jargon.
+    You are a practical quantum game theory consultant who excels at giving clear, actionable business and strategic advice.
     I have provided the classical game theory schema and the Qiskit multi-qubit W-state quantum entanglement simulation results (Winning Mode).
     
     Schema: {schema.model_dump_json(indent=2)}
     Quantum Results: {json.dumps(quantum_results, indent=2)}
     
+    CRITICAL FORMATTING RULES FOR LATEX & MARKDOWN:
+    - Put every long mathematical equation or state vector on its own separate line wrapped in display math delimiters: \\[ equation \\]
+    - Do NOT split simple numbers or basic arithmetic across multiple lines (write 15.0 + 4(3.0) = 27.0 inline naturally without broken math tags).
+    - Insert double newlines between paragraphs and bullet points to ensure clean rendering.
+    
     Task:
     Provide a Markdown response structured strictly as follows:
     
     1. **Overview**: A concise 2-sentence description summarizing the problem, the players involved (2-5 players with multi-choice actions), and the objective to secure a win without triggering mutual penalty collisions.
+    
     2. **Practical Player Action Guide**: A clear bulleted list detailing for EACH player by name:
        - **Recommended Action**: State the exact action name they should play to win from their multi-choice action set.
        - **Strategic Goal & Payoff**: Explain in plain terms what condition leads to their victory and the exact payoff reward.
+    
     3. **Strategic Winning Matrix Table**: A clean markdown table presenting:
        - **Player Name**: Name of the player.
        - **Action to Play**: The specific classical action the player executes to achieve victory.
        - **Target Binary / Action State**: The binary state and corresponding action key representing their solo win.
-       - **Local Strategy Parameter ($\\theta$ / Phase Angle)**: The exact local strategy parameter angle required for each player to win.
+       - **Local Strategy Parameter**: The angle $\theta$ (e.g. $\theta = \pi/2$).
        - **Winner vs. Non-Winner Payoff**: The payoff for winning vs. non-winning players.
-    4. **Preventing Mutual Collision & Blackouts**: A practical explanation of how the multi-qubit W-state superposition guarantees that exactly one player succeeds while preventing dangerous blackout/collision penalties.
+    
+    4. **Preventing Mutual Collision & Blackouts**: A practical explanation of how the multi-qubit W-state superposition guarantees that exactly one player succeeds while preventing dangerous blackout/collision penalties. Show the state equation as a standalone block:
+       \\[ |W_N\\rangle = \\frac{{1}}{{\\sqrt{{N}}}} \\left( |100\\dots\\rangle + |010\\dots\\rangle + \\dots \\right) \\]
+    
     5. **Actionable Executive Insights**:
        - **Why This Strategy Works**: Practical breakdown of how quantum correlation coordinates multi-action choices without collusion.
        - **Actionable Execution Plan**: High-level advice for players on how to implement this strategy in real-world negotiations or competitive scenarios.
     
-    Do not output JSON, only return raw Markdown text with valid LaTeX for math symbols (e.g. $\\theta = \\pi/2$).
+    Do not output JSON, only return raw Markdown text.
     """
     else:
         insights_prompt = f"""
