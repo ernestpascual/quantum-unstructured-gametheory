@@ -196,7 +196,10 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
     Task:
     Provide a Markdown response structured strictly as follows:
     
-    1. **Overview**: A concise 2-sentence description summarizing the problem, the players involved (2-5 players with multi-choice actions), and the objective to secure a win without triggering mutual penalty collisions.
+    1. **Overview & Initial Game Setup**:
+       - **Problem Summary**: A concise 2-sentence description summarizing the core strategic conflict.
+       - **Players & Decisions**: Explicitly list all participating players (2 to 5) and ALL available action/decision choices for each player (up to 5 actions per player).
+       - **Complete Classical Payoff Matrix**: Render a clear, comprehensive markdown table showing ALL joint action combinations and the resulting payoff vector for each player.
     
     2. **Practical Player Action Guide**: A clear bulleted list detailing for EACH player by name:
        - **Recommended Action**: State the exact action name they should play to win from their multi-choice action set.
@@ -206,13 +209,13 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
        - **Player Name**: Name of the player.
        - **Action to Play**: The specific classical action the player executes to achieve victory.
        - **Target Binary / Action State**: The binary state and corresponding action key representing their solo win.
-       - **Local Strategy Parameter**: The angle $\theta$ (e.g. $\theta = \pi/2$).
+       - **Local Strategy Parameter**: The angle $\\theta$ (e.g. $\\theta = \\pi/2$).
        - **Winner vs. Non-Winner Payoff**: The payoff for winning vs. non-winning players.
     
     4. **Preventing Mutual Collision & Blackouts**: A practical explanation of how the multi-qubit W-state superposition guarantees that exactly one player succeeds while preventing dangerous blackout/collision penalties. Show the state equation as a standalone block:
        \\[ |W_N\\rangle = \\frac{{1}}{{\\sqrt{{N}}}} \\left( |100\\dots\\rangle + |010\\dots\\rangle + \\dots \\right) \\]
     
-    5. **Actionable Executive Insights**:
+    5. **Actionable Executive Insights & Results Analysis**:
        - **Why This Strategy Works**: Practical breakdown of how quantum correlation coordinates multi-action choices without collusion.
        - **Actionable Execution Plan**: High-level advice for players on how to implement this strategy in real-world negotiations or competitive scenarios.
     
@@ -229,10 +232,14 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
     Task:
     Provide a Markdown response structured strictly as follows:
     
-    1. **Overview**: A concise 2-sentence description summarizing the core multi-action problem, key actors, and high-level strategic dilemma.
-    2. **Classical Game Matrix**: A clear table summarizing the players, their action choices (up to 5 actions), and the classical payoff matrix.
-    3. **EWL Quantum Strategy & Probability Analysis**: An analysis mapping the resulting EWL probability distribution back to specific multi-player action choices.
-    4. **Quantum Nash Equilibrium & Insights**: 
+    1. **Overview & Initial Game Setup**:
+       - **Problem Summary**: A concise 2-sentence description summarizing the core strategic conflict.
+       - **Players & Decisions**: Explicitly list all participating players (2 to 5) and ALL available action/decision choices for each player (up to 5 actions per player).
+       - **Complete Classical Payoff Matrix**: Render a clear, comprehensive markdown table showing ALL joint action combinations and the resulting payoff vector for each player.
+    
+    2. **EWL Quantum Strategy & Probability Analysis**: An analysis mapping the resulting EWL probability distribution back to specific multi-player action choices.
+    
+    3. **Quantum Nash Equilibrium & Insights**: 
        Explain this section in simple, intuitive terms by breaking it down into 3 clear subsections:
        - **Quantum Nash Equilibrium**: Identify the true Quantum Nash Equilibrium resulting from the EWL protocol ($J \\to U_1 \\otimes \\dots \\otimes U_n \\to J^\\dagger$).
        - **How Quantum Interference Prevents Defection Traps**: Explain in plain language how destructive quantum interference cancels out classical betrayal/defection states.
