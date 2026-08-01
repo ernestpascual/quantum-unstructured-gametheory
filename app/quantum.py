@@ -25,49 +25,25 @@ def get_qubits_per_player(num_actions: int) -> int:
     else:
         return 3
 
-def create_ewl_entangling_gate(num_qubits: int, gamma: float = math.pi / 2):
-    """
-    Constructs the EWL J entangling operator matrix for N qubits.
-    J = exp(i * gamma/2 * (X^N)).
-    For gamma = pi/2, J = 1/sqrt(2) * (I^N + i * X^N).
-    """
-    from qiskit.circuit.library import UnitaryGate
-    import numpy as np
-
-    dim = 2 ** num_qubits
-    # Pauli X operator tensor product across all qubits
-    X = np.array([[0, 1], [1, 0]], dtype=complex)
-    X_tensor = X
-    for _ in range(1, num_qubits):
-        X_tensor = np.kron(X_tensor, X)
-    
-    # J = cos(gamma/2) * I + i * sin(gamma/2) * X_tensor
-    identity = np.eye(dim, dtype=complex)
-    J_matrix = math.cos(gamma / 2.0) * identity + 1j * math.sin(gamma / 2.0) * X_tensor
-    
-    J_gate = UnitaryGate(J_matrix, label="J")
-    J_dag_gate = UnitaryGate(J_matrix.conj().T, label="J†")
-    return J_gate, J_dag_gate
-
 def build_ewl_circuit(n_players: int, qubits_per_player: List[int]) -> tuple:
     """
-    Builds an EWL quantum circuit:
-    1. Apply J entangling operator across initial |0...0> qubits.
-    2. Apply player strategy rotation gates U_i(theta, phi, lambda) per player.
-    3. Apply J^dagger disentanglement operator.
-    4. Measure all qubits.
+    Builds an EWL quantum game circuit using native gates for instant performance:
+    1. Entangling operator J: Hadamard on qubit 0 followed by CNOT cascade across all player qubits.
+    2. Player Strategy Operators: Localized strategy gates U(theta, phi, lambda) per player qubit.
+    3. Disentangling operator J^dagger: Reverse CNOT cascade followed by Hadamard on qubit 0.
+    4. Measurement.
     """
     from qiskit import QuantumCircuit
     
     total_qubits = sum(qubits_per_player)
     qc = QuantumCircuit(total_qubits, total_qubits)
     
-    J_gate, J_dag_gate = create_ewl_entangling_gate(total_qubits, gamma=math.pi / 2)
-    
-    # 1. Apply J entangling operator
-    qc.append(J_gate, range(total_qubits))
-    
-    # 2. Apply localized player strategy operators U_i
+    # 1. Entanglement Operator J (GHZ-style initial entanglement for EWL protocol)
+    qc.h(0)
+    for q in range(1, total_qubits):
+        qc.cx(0, q)
+        
+    # 2. Localized Player Strategy Operators U_i (EWL strategy space)
     qubit_offset = 0
     for p_idx, q_count in enumerate(qubits_per_player):
         for q in range(q_count):
@@ -76,8 +52,10 @@ def build_ewl_circuit(n_players: int, qubits_per_player: List[int]) -> tuple:
             qc.u(math.pi / 2, 0.0, math.pi / 2, target_qubit)
         qubit_offset += q_count
 
-    # 3. Apply J^dagger disentanglement operator
-    qc.append(J_dag_gate, range(total_qubits))
+    # 3. Disentanglement Operator J^dagger
+    for q in range(total_qubits - 1, 0, -1):
+        qc.cx(0, q)
+    qc.h(0)
     
     # 4. Measurement
     qc.measure(range(total_qubits), range(total_qubits))
