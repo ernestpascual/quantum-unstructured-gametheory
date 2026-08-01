@@ -5,7 +5,18 @@ import gradio as gr
 from app.schemas import GameRequest, GameResponse
 from app.core import run_game_analysis
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Quantum Game Theory API")
+
+# Enable CORS for external frontends
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- API Endpoints ---
 
