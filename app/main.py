@@ -190,7 +190,7 @@ with gr.Blocks(title="Quantum Game Theory Analyzer", css=custom_css) as demo:
             
         with gr.Column(scale=1, elem_classes=["scrollable-column"]):
             gr.Markdown("### 📊 Quantum & Classical Analysis")
-            markdown_output = gr.Markdown(label="Analysis Insights")
+            markdown_output = gr.Markdown(label="Analysis Insights", latex_delimiters=[{"left": "$", "right": "$", "display": False}, {"left": "$$", "right": "$$", "display": True}])
             json_output = gr.JSON(label="Processed Context (Classical + Quantum)")
 
     example_btn.click(

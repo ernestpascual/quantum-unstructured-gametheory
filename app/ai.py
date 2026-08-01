@@ -174,7 +174,7 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
 
     if mode == "winning":
         insights_prompt = f"""
-    You are an expert in quantum game theory who excels at explaining complex quantum concepts in simple, plain English. 
+    You are a practical quantum game theory consultant who excels at giving clear, actionable business and strategic advice without heavy mathematical jargon.
     I have provided the classical game theory schema and the Qiskit W-state quantum entanglement results (Winning Mode).
     
     Schema: {schema.model_dump_json(indent=2)}
@@ -183,23 +183,22 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
     Task:
     Provide a Markdown response structured strictly as follows:
     
-    1. **Overview**: A concise 2-sentence description summarizing the core problem, key actors, and the strategic objective to achieve a decisive win without blackout penalties.
-    2. **Player Winning Strategy Guide**: A clear bulleted list explicitly detailing for EACH player by name:
-       - **What Action Player X Must Play to Win**: Map the binary `'1'` state directly back to the exact action name in their action set (e.g. "Alice must play 'Cooperate' / 'Bid High'").
-       - **Winning Conditions & Payoff**: The exact payoff Player X receives when they win versus when they do not.
-    3. **Strategic Winning Matrix Table**: A markdown table presenting:
+    1. **Overview**: A concise 2-sentence description summarizing the problem, the players involved, and the objective to secure a win without triggering mutual penalty collisions.
+    2. **Practical Player Action Guide**: A clear bulleted list detailing for EACH player by name:
+       - **Recommended Action**: State the exact, plain-English action name they should play to win (e.g., "Alice should play 'Cooperate'").
+       - **Strategic Goal & Payoff**: Explain in plain terms what condition leads to their victory and the exact payoff reward.
+    3. **Strategic Winning Matrix Table**: A clean markdown table presenting:
        - **Player Name**: Name of the player.
-       - **Action to Play to Win**: The specific classical action the player must execute.
-       - **Targeted Binary State**: The corresponding binary state (e.g., '100', '010', '001') representing their solo win.
-       - **Rotation Angle ($\theta$)**: The required quantum local strategy rotation angle.
-       - **Winner Payoff vs. Others**: Payoff rewarded to the single winner versus the remaining non-winning players.
-    4. **Preventing Blackout via W-State**: An explanation of how the balanced W-state superposition guarantees that exactly one winner emerges while safely preventing dangerous 'all-1s' or 'all-0s' blackout collision penalties.
-    5. **Quantum Strategy Analysis & Insights**:
-       - **Why this W-State Result Occurred**: Explain in plain language why the W-state superposition produced balanced winning probabilities for each player's action.
-       - **What Happens During the Quantum State**: Explain how single-photon style superposition restricts the system from triggering blackout penalties.
-       - **Why it is the Best Outcome**: Compare this against uncoordinated classical gambling or conflict where multiple players collide into blackout penalties.
+       - **Action to Play**: The specific classical action the player executes to achieve victory.
+       - **Target Binary State**: The binary state (e.g., '100', '010', '001') representing their solo win.
+       - **Rotation Angle**: The local strategy rotation angle $\\theta$ (formatted in LaTeX, e.g. $\\theta = \\pi/2$).
+       - **Winner vs. Non-Winner Payoff**: The payoff for winning vs. losing.
+    4. **Preventing Mutual Collision & Blackouts**: A practical, non-mathematical explanation of how the W-state superposition guarantees that exactly one player succeeds while preventing dangerous "all-defect" or "all-collide" blackout penalties.
+    5. **Actionable Executive Insights**:
+       - **Why This Strategy Works**: Practical breakdown of how quantum correlation coordinates choices without collusion.
+       - **Actionable Execution Plan**: High-level advice for players on how to implement this strategy in real-world negotiations or competitive scenarios.
     
-    Do not output JSON, only return the raw Markdown text.
+    Do not output JSON, only return raw Markdown text with valid LaTeX for math symbols (e.g. $\\theta = \\pi/2$). Keep complex mathematical derivations minimal and focus on practical, descriptive clarity.
     """
     else:
         insights_prompt = f"""
