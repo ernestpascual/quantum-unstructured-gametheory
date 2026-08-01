@@ -1,0 +1,21 @@
+{
+  "simulation_mode": "equilibrium",
+  "n_players": 2,
+  "qubits_per_player": [2, 2],
+  "total_qubits": 4,
+  "quantum_counts": {
+    "0000": 268,
+    "0001": 254,
+    "0100": 249,
+    "0101": 253
+  },
+  "dominant_joint_action": "Alice: Cooperate, Bob: Cooperate",
+  "joint_action_probabilities": {
+    "Alice: Cooperate, Bob: Cooperate": 0.2617,
+    "Alice: Defect, Bob: Cooperate": 0.248,
+    "Alice: Cooperate, Bob: Defect": 0.2432,
+    "Alice: Defect, Bob: Defect": 0.2471
+  },
+  "total_shots": 1024,
+  "entanglement_type": "2-Player (4-Qubit) EWL Quantum Game Protocol"
+}

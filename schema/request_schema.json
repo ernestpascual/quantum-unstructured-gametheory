@@ -1,0 +1,26 @@
+{
+  "is_game_theory": true,
+  "players": [
+    {
+      "name": "Alice",
+      "actions": ["Cooperate", "Defect", "Negotiate"]
+    },
+    {
+      "name": "Bob",
+      "actions": ["Cooperate", "Defect", "Negotiate"]
+    }
+  ],
+  "payoff_matrix": {
+    "Cooperate, Cooperate": [3.0, 3.0],
+    "Cooperate, Defect": [0.0, 5.0],
+    "Cooperate, Negotiate": [2.0, 2.0],
+    "Defect, Cooperate": [5.0, 0.0],
+    "Defect, Defect": [1.0, 1.0],
+    "Defect, Negotiate": [4.0, 0.5],
+    "Negotiate, Cooperate": [2.0, 2.0],
+    "Negotiate, Defect": [0.5, 4.0],
+    "Negotiate, Negotiate": [2.5, 2.5]
+  },
+  "narrative_context": "Two companies negotiating market entry with options to Cooperate, Defect, or Negotiate.",
+  "simulation_mode": "equilibrium"
+}

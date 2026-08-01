@@ -2,8 +2,8 @@ from typing import Union
 from fastapi import FastAPI, HTTPException
 import gradio as gr
 
-from app.schemas import GameRequest, GameResponse
-from app.core import run_game_analysis
+from app.schemas import GameRequest, GameResponse, GameTheorySchema, QuantumSimulationRequest, QuantumSimulationResponse
+from app.core import run_game_analysis, run_game_quantum_only
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -28,6 +28,16 @@ async def health_check():
 async def api_analyze_game(request: GameRequest):
     try:
         return run_game_analysis(request)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/run_game_quantum_only", response_model=QuantumSimulationResponse)
+async def api_run_game_quantum_only(payload: Union[QuantumSimulationRequest, GameTheorySchema]):
+    try:
+        if isinstance(payload, QuantumSimulationRequest):
+            return run_game_quantum_only(payload.schema_data, simulation_mode=payload.simulation_mode)
+        else:
+            return run_game_quantum_only(payload)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

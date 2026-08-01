@@ -1,7 +1,7 @@
 import time
 import logging
 from typing import Union
-from app.schemas import GameRequest, GameResponse
+from app.schemas import GameRequest, GameResponse, GameTheorySchema
 from app.ai import parse_game_scenario, generate_quantum_insights
 from app.quantum import process_quantum_entanglement
 
@@ -64,3 +64,20 @@ def run_game_analysis(request: GameRequest) -> Union[GameResponse, str]:
             "quantum_results": quantum_results
         }
     )
+
+def run_game_quantum_only(schema: GameTheorySchema, simulation_mode: str = None) -> dict:
+    if len(schema.players) < 2:
+        raise ValueError("Minimum of 2 players required for quantum simulation.")
+    if len(schema.players) > 5:
+        raise ValueError("Maximum of 5 players allowed.")
+
+    mode = simulation_mode or getattr(schema, "simulation_mode", "equilibrium")
+    logger.info(f"⚡ Running Direct Quantum Simulation Only (Players: {len(schema.players)}, Mode: {mode})")
+    
+    start_time = time.time()
+    quantum_results = process_quantum_entanglement(
+        schema=schema,
+        simulation_mode=mode
+    )
+    logger.info(f"✅ Direct Quantum Simulation Completed in {time.time() - start_time:.2f}s")
+    return quantum_results

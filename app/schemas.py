@@ -13,6 +13,25 @@ class GameTheorySchema(BaseModel):
         description="Mapping of joint actions (comma-separated, matching player order) to a list of payoffs. Example for 3 players: 'ActionA,ActionB,ActionA': [1.0, 5.0, 0.0]"
     )
     narrative_context: str = Field(description="A brief summary of the conflict and incentives.")
+    simulation_mode: Literal["equilibrium", "winning"] = Field(default="equilibrium", description="Quantum Simulation Mode: 'equilibrium' (EWL protocol) or 'winning' (W-state)")
+
+class QuantumSimulationRequest(BaseModel):
+    schema_data: GameTheorySchema = Field(..., alias="schema", description="The GameTheorySchema object containing players, actions, and payoffs.")
+    simulation_mode: Literal["equilibrium", "winning"] = Field(default="equilibrium", description="Quantum Simulation Mode: 'equilibrium' or 'winning'.")
+
+    class Config:
+        populate_by_name = True
+
+class QuantumSimulationResponse(BaseModel):
+    simulation_mode: str
+    n_players: int
+    qubits_per_player: List[int]
+    total_qubits: int
+    quantum_counts: Dict[str, int]
+    dominant_joint_action: str
+    joint_action_probabilities: Dict[str, float]
+    total_shots: int
+    entanglement_type: str
 
 class GameRequest(BaseModel):
     text: str
