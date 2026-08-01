@@ -3,8 +3,8 @@ import requests
 from app.schemas import GameTheorySchema
 
 DEFAULT_MODELS = {
-    "OpenRouter": "google/gemini-2.5-flash",
-    "Google AI Studio": "gemini-2.5-flash",
+    "OpenRouter": "google/gemini-3.6-flash",
+    "Google AI Studio": "gemini-3.6-flash",
     "OpenAI": "gpt-4o"
 }
 

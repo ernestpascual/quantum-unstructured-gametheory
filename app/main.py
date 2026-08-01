@@ -172,9 +172,9 @@ with gr.Blocks(title="Quantum Game Theory Analyzer", css=custom_css) as demo:
             api_key_input = gr.Textbox(label="API Key", type="password", placeholder="Enter provider API Key...")
             model_input = gr.Textbox(
                 label="Model Name",
-                value="google/gemini-2.5-flash",
-                placeholder="Enter custom model (e.g. google/gemini-2.5-flash, openai/gpt-4o)...",
-                info="📌 Note: Default model is set to 'google/gemini-2.5-flash'. You can type any alternative model supported by your selected provider to override it."
+                value="google/gemini-3.6-flash",
+                placeholder="Enter custom model (e.g. google/gemini-3.6-flash, openai/gpt-4o)...",
+                info="📌 Note: Default model is set to 'google/gemini-3.6-flash'. You can type any alternative model supported by your selected provider to override it."
             )
             mode_input = gr.Dropdown(
                 choices=["equilibrium", "winning"],
