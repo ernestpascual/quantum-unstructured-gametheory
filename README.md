@@ -24,6 +24,29 @@ To ensure minimal wake-up latency when deployed to serverless environments (e.g.
 
 ---
 
+## 🚂 Deploying to Railway
+
+This repository is pre-configured for instant deployment on Railway using either **Nixpacks** (`railway.toml`) or **Docker** (`Dockerfile`).
+
+### Option 1: One-Click / GitHub Integration (Recommended)
+1. Push this repository to GitHub.
+2. Go to [Railway.app](https://railway.app) and create a **New Project** -> **Deploy from GitHub repo**.
+3. Select your repository.
+4. Railway will automatically detect `railway.toml` or `Dockerfile` and configure:
+   - **Start Command**: `sh start.sh`
+   - **Healthcheck Path**: `/health`
+   - **Port**: Auto-assigned by Railway via `$PORT`.
+
+### Option 2: Railway CLI Deployment
+```bash
+npm i -g @railway/cli
+railway login
+railway init
+railway up
+```
+
+---
+
 ## ⚛️ Quantum Algorithm Description
 
 The quantum simulation pipeline in `app/quantum.py` utilizes **Multi-Qubit GHZ (Greenberger–Horne–Zeilinger) Entanglement** and rotation gates to construct a joint decision space:
