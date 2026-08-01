@@ -7,12 +7,17 @@ def run_game_analysis(request: GameRequest) -> Union[GameResponse, str]:
     if not request.api_key:
         raise ValueError("API Key is required.")
 
-    # Step 1: Parse Text via OpenRouter LLM
-    schema = parse_game_scenario(api_key=request.api_key, text=request.text)
+    # Step 1: Parse Text via selected AI provider
+    schema = parse_game_scenario(
+        api_key=request.api_key,
+        text=request.text,
+        provider=request.provider,
+        model=request.model or None
+    )
 
     # Step 2: Validation check
     if not schema.is_game_theory:
-        return "this is not game theory problem."
+        return "this is not game theory problem. Tip: Make sure to clearly define the players, their decisions/actions, and the payoff impact of those decisions."
 
     if len(schema.players) > 5:
         raise ValueError("Maximum of 5 players allowed.")
@@ -24,7 +29,9 @@ def run_game_analysis(request: GameRequest) -> Union[GameResponse, str]:
     markdown_output = generate_quantum_insights(
         api_key=request.api_key,
         schema=schema,
-        quantum_results=quantum_results
+        quantum_results=quantum_results,
+        provider=request.provider,
+        model=request.model or None
     )
 
     return GameResponse(

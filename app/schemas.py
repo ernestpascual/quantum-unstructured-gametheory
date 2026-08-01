@@ -17,6 +17,8 @@ class GameTheorySchema(BaseModel):
 class GameRequest(BaseModel):
     text: str
     api_key: str
+    provider: str = Field(default="OpenRouter", description="AI Provider: OpenRouter, Google AI Studio, or OpenAI")
+    model: str = Field(default="", description="Optional custom model name")
 
 class GameResponse(BaseModel):
     markdown_response: str
