@@ -184,13 +184,18 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
     Provide a Markdown response structured strictly as follows:
     
     1. **Overview**: A concise 2-sentence description summarizing the core problem, key actors, and the strategic objective to achieve a decisive win without blackout penalties.
-    2. **Strategic Winning Matrix Table**: A markdown table presenting:
-       - **Targeted Binary Winning State**: Exactly one active '1' state (e.g. '100', '010', '001') representing a solo winner.
-       - **Rotation Angle (Theta)**: The exact local strategy rotation angle required for each player to win.
-       - **Winner Payoff vs. Other Players**: The payoff rewarded to the single winner versus the remaining non-winning players.
-    3. **Preventing Blackout via W-State**: An explanation of how the balanced W-state superposition guarantees that exactly one winner emerges while safely preventing dangerous 'all-1s' or 'all-0s' blackout collision penalties.
-    4. **Quantum Strategy Analysis & Insights**:
-       - **Why this W-State Result Occurred**: Explain in plain language why the W-state superposition produced balanced winning probabilities.
+    2. **Player Winning Strategy Guide**: A clear bulleted list explicitly detailing for EACH player by name:
+       - **What Action Player X Must Play to Win**: Map the binary `'1'` state directly back to the exact action name in their action set (e.g. "Alice must play 'Cooperate' / 'Bid High'").
+       - **Winning Conditions & Payoff**: The exact payoff Player X receives when they win versus when they do not.
+    3. **Strategic Winning Matrix Table**: A markdown table presenting:
+       - **Player Name**: Name of the player.
+       - **Action to Play to Win**: The specific classical action the player must execute.
+       - **Targeted Binary State**: The corresponding binary state (e.g., '100', '010', '001') representing their solo win.
+       - **Rotation Angle ($\theta$)**: The required quantum local strategy rotation angle.
+       - **Winner Payoff vs. Others**: Payoff rewarded to the single winner versus the remaining non-winning players.
+    4. **Preventing Blackout via W-State**: An explanation of how the balanced W-state superposition guarantees that exactly one winner emerges while safely preventing dangerous 'all-1s' or 'all-0s' blackout collision penalties.
+    5. **Quantum Strategy Analysis & Insights**:
+       - **Why this W-State Result Occurred**: Explain in plain language why the W-state superposition produced balanced winning probabilities for each player's action.
        - **What Happens During the Quantum State**: Explain how single-photon style superposition restricts the system from triggering blackout penalties.
        - **Why it is the Best Outcome**: Compare this against uncoordinated classical gambling or conflict where multiple players collide into blackout penalties.
     
