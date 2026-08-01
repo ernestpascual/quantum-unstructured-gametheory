@@ -225,10 +225,14 @@ print(data["markdown_response"])
     },
     "quantum_results": {
       "simulation_mode": "equilibrium",
+      "n_players": 2,
+      "qubits_per_player": [1, 1],
+      "total_qubits": 2,
       "quantum_counts": {"00": 512, "11": 512},
-      "dominant_strategy_binary": "00",
+      "dominant_joint_action": "Alice: Cooperate, Bob: Cooperate",
+      "joint_action_probabilities": {"Alice: Cooperate, Bob: Cooperate": 0.5},
       "total_shots": 1024,
-      "entanglement_type": "2-qubit GHZ state (Equilibrium Mode)"
+      "entanglement_type": "2-Player (2-Qubit) EWL Quantum Game Protocol"
     }
   }
 }
@@ -237,6 +241,110 @@ print(data["markdown_response"])
 #### Response (Non-Game Theory Problem)
 ```json
 "this is not game theory problem. Tip: Make sure to clearly define the players, their decisions/actions, and the payoff impact of those decisions."
+```
+
+---
+
+### ⚡ 2. Direct Quantum Simulation Endpoint (`POST /run_game_quantum_only`)
+
+Execute Qiskit quantum circuit simulations directly on `AerSimulator` without invoking LLMs or needing an API key. Pass a raw `GameTheorySchema` (players, actions, payoffs) and receive raw quantum probability distributions.
+
+> 📁 **Schema Reference Files**: Request & response JSON templates are available in [schema/request_schema.json](file:///Users/ernest.pascual/Downloads/Development/quantum-gametheory/schema/request_schema.json) and [schema/response_schema.json](file:///Users/ernest.pascual/Downloads/Development/quantum-gametheory/schema/response_schema.json).
+
+#### Request Payload (`POST /run_game_quantum_only`)
+```json
+{
+  "is_game_theory": true,
+  "players": [
+    {
+      "name": "Alice",
+      "actions": ["Cooperate", "Defect", "Negotiate"]
+    },
+    {
+      "name": "Bob",
+      "actions": ["Cooperate", "Defect", "Negotiate"]
+    }
+  ],
+  "payoff_matrix": {
+    "Cooperate, Cooperate": [3.0, 3.0],
+    "Cooperate, Defect": [0.0, 5.0],
+    "Cooperate, Negotiate": [2.0, 2.0],
+    "Defect, Cooperate": [5.0, 0.0],
+    "Defect, Defect": [1.0, 1.0],
+    "Defect, Negotiate": [4.0, 0.5],
+    "Negotiate, Cooperate": [2.0, 2.0],
+    "Negotiate, Defect": [0.5, 4.0],
+    "Negotiate, Negotiate": [2.5, 2.5]
+  },
+  "narrative_context": "Two negotiating parties",
+  "simulation_mode": "equilibrium"
+}
+```
+
+#### cURL Example
+```bash
+curl -X POST "https://your-app.up.railway.app/run_game_quantum_only" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "is_game_theory": true,
+    "players": [
+      {"name": "Alice", "actions": ["Cooperate", "Defect"]},
+      {"name": "Bob", "actions": ["Cooperate", "Defect"]}
+    ],
+    "payoff_matrix": {
+      "Cooperate, Cooperate": [3.0, 3.0],
+      "Cooperate, Defect": [0.0, 5.0],
+      "Defect, Cooperate": [5.0, 0.0],
+      "Defect, Defect": [1.0, 1.0]
+    },
+    "narrative_context": "Prisoner Dilemma",
+    "simulation_mode": "winning"
+  }'
+```
+
+#### JavaScript (`fetch`)
+```javascript
+const res = await fetch("https://your-app.up.railway.app/run_game_quantum_only", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    is_game_theory: true,
+    players: [
+      { name: "Alice", actions: ["Cooperate", "Defect"] },
+      { name: "Bob", actions: ["Cooperate", "Defect"] }
+    ],
+    payoff_matrix: { "Cooperate, Cooperate": [3.0, 3.0] },
+    narrative_context: "Direct test",
+    simulation_mode: "equilibrium"
+  })
+});
+const quantumResults = await res.json();
+console.log(quantumResults.dominant_joint_action);
+```
+
+#### Response Output
+```json
+{
+  "simulation_mode": "equilibrium",
+  "n_players": 2,
+  "qubits_per_player": [2, 2],
+  "total_qubits": 4,
+  "quantum_counts": {
+    "0000": 268,
+    "0001": 254,
+    "0100": 249,
+    "0101": 253
+  },
+  "dominant_joint_action": "Alice: Cooperate, Bob: Cooperate",
+  "joint_action_probabilities": {
+    "Alice: Cooperate, Bob: Cooperate": 0.2617,
+    "Alice: Defect, Bob: Cooperate": 0.248,
+    "Alice: Cooperate, Bob: Defect": 0.2432,
+    "Alice: Defect, Bob: Defect": 0.2471
+  },
+  "total_shots": 1024,
+  "entanglement_type": "2-Player (4-Qubit) EWL Quantum Game Protocol"
+}
 ```
 
 ---
