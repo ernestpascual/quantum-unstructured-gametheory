@@ -137,8 +137,10 @@ def parse_game_scenario(api_key: str, text: str, provider: str = "OpenRouter", m
     {json_schema_str}
 
     CRITICAL PARSING RULES:
-    1. **Dynamic Player Capacity**: Extract between 2 and 5 players (`players` array size must be 2 to 5).
-    2. **Multi-Action Options**: Each player can have anywhere from 2 to 5 distinct action choices (e.g. ['Cooperate', 'Defect', 'Compromise']). Do NOT restrict to binary choices if 3, 4, or 5 choices are described.
+    1. **Dynamic Player Capacity**: Extract ALL players described in the text (from 2 up to 5 players).
+    2. **Comprehensive Action/Decision Extraction**: Extract ALL possible decisions, actions, or choices mentioned for each player (up to 5 actions per player).
+       - Do NOT default or limit a player's actions to 2 if 3, 4, or 5 decisions are described or plausible in the scenario!
+       - Capture the complete decision space (e.g., ['Bid High', 'Bid Medium', 'Bid Low', 'Pass'] or ['Cooperate', 'Defect', 'Negotiate', 'Retaliate', 'Surrender']).
     3. **Complete Payoff Matrix**: Construct the `payoff_matrix` dictionary containing entries for EVERY joint action combination across all players.
        - Keys must be formatted as comma-separated player action names matching player order (e.g., 'Action1, Action2' for 2 players, or 'ActionA, ActionB, ActionC' for 3 players).
        - Values must be a JSON array of floats representing the payoffs for each player in that exact order (e.g., [1.0, 5.0] or [2.0, 0.0, -1.0]).
