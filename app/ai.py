@@ -169,10 +169,37 @@ def parse_game_scenario(api_key: str, text: str, provider: str = "OpenRouter", m
             f"(Details: {err})"
         )
 
-def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_results: dict, provider: str = "OpenRouter", model: str = None) -> str:
-    insights_prompt = f"""
+def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_results: dict, provider: str = "OpenRouter", model: str = None, simulation_mode: str = "equilibrium") -> str:
+    mode = (simulation_mode or "equilibrium").lower().strip()
+
+    if mode == "winning":
+        insights_prompt = f"""
     You are an expert in quantum game theory who excels at explaining complex quantum concepts in simple, plain English. 
-    I have provided the classical game theory schema and the Qiskit quantum entanglement results.
+    I have provided the classical game theory schema and the Qiskit W-state quantum entanglement results (Winning Mode).
+    
+    Schema: {schema.model_dump_json(indent=2)}
+    Quantum Results: {json.dumps(quantum_results, indent=2)}
+    
+    Task:
+    Provide a Markdown response structured strictly as follows:
+    
+    1. **Overview**: A concise 2-sentence description summarizing the core problem, key actors, and the strategic objective to achieve a decisive win without blackout penalties.
+    2. **Strategic Winning Matrix Table**: A markdown table presenting:
+       - **Targeted Binary Winning State**: Exactly one active '1' state (e.g. '100', '010', '001') representing a solo winner.
+       - **Rotation Angle (Theta)**: The exact local strategy rotation angle required for each player to win.
+       - **Winner Payoff vs. Other Players**: The payoff rewarded to the single winner versus the remaining non-winning players.
+    3. **Preventing Blackout via W-State**: An explanation of how the balanced W-state superposition guarantees that exactly one winner emerges while safely preventing dangerous 'all-1s' or 'all-0s' blackout collision penalties.
+    4. **Quantum Strategy Analysis & Insights**:
+       - **Why this W-State Result Occurred**: Explain in plain language why the W-state superposition produced balanced winning probabilities.
+       - **What Happens During the Quantum State**: Explain how single-photon style superposition restricts the system from triggering blackout penalties.
+       - **Why it is the Best Outcome**: Compare this against uncoordinated classical gambling or conflict where multiple players collide into blackout penalties.
+    
+    Do not output JSON, only return the raw Markdown text.
+    """
+    else:
+        insights_prompt = f"""
+    You are an expert in quantum game theory who excels at explaining complex quantum concepts in simple, plain English. 
+    I have provided the classical game theory schema and the Qiskit GHZ-state quantum entanglement results (Equilibrium Mode).
     
     Schema: {schema.model_dump_json(indent=2)}
     Quantum Results: {json.dumps(quantum_results, indent=2)}

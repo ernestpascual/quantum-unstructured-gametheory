@@ -94,9 +94,15 @@ EXAMPLE_SCENARIO = """Two suspects are arrested by the police. The police have i
 
 Payoff matrix rewards: Cooperate,Cooperate = [1, 1], Cooperate,Defect = [0, 10], Defect,Cooperate = [10, 0], Defect,Defect = [5, 5]."""
 
-def gradio_interface(provider, api_key, model, text):
+def gradio_interface(provider, api_key, model, simulation_mode, text):
     try:
-        request = GameRequest(provider=provider, api_key=api_key, model=model.strip(), text=text)
+        request = GameRequest(
+            provider=provider,
+            api_key=api_key,
+            model=model.strip(),
+            simulation_mode=simulation_mode,
+            text=text
+        )
         result = run_game_analysis(request)
         
         if isinstance(result, str):
@@ -147,9 +153,12 @@ with gr.Blocks(title="Quantum Game Theory Analyzer", css=custom_css) as demo:
         ### How to use this tool:
         1. **Select an AI Provider**: Choose between **OpenRouter**, **Google AI Studio**, or **OpenAI**.
         2. **Enter API Key**: Paste your corresponding API key into the password field.
-        3. **Describe a Scenario**: Input a text description of a conflict or strategic interaction involving players, actions, and payoffs.
-        4. **Run Simulation**: Click **Analyze Quantum Strategy**. The app will extract the game theory schema, run a Qiskit quantum entanglement simulation ($N$-qubit GHZ state), and present classical vs. quantum equilibria insights.
-        5. **Export Results**: Download the generated report as a **Markdown (`.md`)** file or a compiled **PDF document (`.pdf`)**.
+        3. **Select Quantum Simulation Mode**:
+           - **Equilibrium (GHZ State)**: Analyzes quantum entanglement correlations for joint Nash/Pareto equilibria.
+           - **Winning (W State)**: Generates a Strategic Winning Matrix Table showing targeted binary winning states, rotation angles ($\theta$), payoffs, and blackout avoidance.
+        4. **Describe a Scenario**: Input a text description of a conflict or strategic interaction involving players, actions, and payoffs.
+        5. **Run Simulation**: Click **Analyze Strategy**.
+        6. **Export Results**: Download the generated report as a **Markdown (`.md`)** file or a compiled **PDF document (`.pdf`)**.
         """)
     
     with gr.Row(elem_classes=["main-container"]):
@@ -162,6 +171,12 @@ with gr.Blocks(title="Quantum Game Theory Analyzer", css=custom_css) as demo:
             )
             api_key_input = gr.Textbox(label="API Key", type="password", placeholder="Enter provider API Key...")
             model_input = gr.Textbox(label="Model Name (Optional)", placeholder="Leave blank for default (e.g. gpt-4o, gemini-1.5-pro)")
+            mode_input = gr.Dropdown(
+                choices=["equilibrium", "winning"],
+                value="equilibrium",
+                label="Quantum Simulation Mode",
+                info="'equilibrium' = GHZ State Correlation | 'winning' = W State Strategic Winning Matrix"
+            )
             problem_input = gr.Textbox(label="Game Theory Scenario", lines=6, placeholder="Example: Two criminals are arrested...")
             
             with gr.Row():
@@ -185,7 +200,7 @@ with gr.Blocks(title="Quantum Game Theory Analyzer", css=custom_css) as demo:
 
     submit_btn.click(
         fn=gradio_interface,
-        inputs=[provider_input, api_key_input, model_input, problem_input],
+        inputs=[provider_input, api_key_input, model_input, mode_input, problem_input],
         outputs=[markdown_output, json_output]
     )
 

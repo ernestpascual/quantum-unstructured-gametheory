@@ -22,8 +22,11 @@ def run_game_analysis(request: GameRequest) -> Union[GameResponse, str]:
     if len(schema.players) > 5:
         raise ValueError("Maximum of 5 players allowed.")
 
-    # Step 3: Quantum Processing
-    quantum_results = process_quantum_entanglement(schema)
+    # Step 3: Quantum Processing based on simulation_mode ("equilibrium" GHZ state vs "winning" W state)
+    quantum_results = process_quantum_entanglement(
+        schema=schema,
+        simulation_mode=request.simulation_mode
+    )
 
     # Step 4: Generate Markdown Insights
     markdown_output = generate_quantum_insights(
@@ -31,7 +34,8 @@ def run_game_analysis(request: GameRequest) -> Union[GameResponse, str]:
         schema=schema,
         quantum_results=quantum_results,
         provider=request.provider,
-        model=request.model or None
+        model=request.model or None,
+        simulation_mode=request.simulation_mode
     )
 
     return GameResponse(

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Literal
 
 class Player(BaseModel):
     name: str
@@ -19,6 +19,7 @@ class GameRequest(BaseModel):
     api_key: str
     provider: str = Field(default="OpenRouter", description="AI Provider: OpenRouter, Google AI Studio, or OpenAI")
     model: str = Field(default="", description="Optional custom model name")
+    simulation_mode: Literal["equilibrium", "winning"] = Field(default="equilibrium", description="Quantum Simulation Mode: 'equilibrium' (GHZ state) or 'winning' (W state)")
 
 class GameResponse(BaseModel):
     markdown_response: str
