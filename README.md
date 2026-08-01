@@ -6,9 +6,11 @@ A unified **FastAPI** and **Gradio** web application and simulation framework th
 
 ## 📌 Features
 
-- **LLM Game Scenario Parsing**: Analyzes unstructured text scenarios and extracts structured game theory metadata (`GameTheorySchema` for up to 5 players) via OpenRouter.
-- **Quantum Entanglement Simulation**: Simulates decision space strategy rotations over an $N$-qubit GHZ state circuit using Qiskit and `AerSimulator`.
-- **Automated Insights**: Generates structured Markdown reports (classical vs. quantum strategy analysis, payoff matrix summary, and equilibrium shifts).
+- **LLM Game Scenario Parsing**: Analyzes unstructured text scenarios and extracts structured game theory metadata (`GameTheorySchema` for up to 5 players) via OpenRouter, Google AI Studio, or OpenAI.
+- **Dual Quantum Simulation Modes**:
+  - **Equilibrium Mode (`"equilibrium"`)**: Simulates an $N$-qubit **GHZ state** circuit for joint Nash/Pareto equilibria.
+  - **Winning Mode (`"winning"`)**: Generates an $N$-qubit **W-state** circuit using parameterized $R_y$ and Controlled-$R_y$ ($CRY$) rotations to produce a **Strategic Winning Matrix Table** that safely prevents blackout collision penalties.
+- **Automated Insights**: Generates structured Markdown reports (classical vs. quantum strategy analysis, payoff matrix summary, and equilibrium/winning shifts).
 - **FastAPI Backend + Gradio Frontend**: Exposes a clean REST API `/analyze_game` while hosting a Gradio web interface mounted at the root (`/`).
 - **Serverless & Sleeping Container Optimized**: Fast boot times with lazy module loading and built-in health check `/health`.
 
@@ -49,20 +51,27 @@ railway up
 
 ## ⚛️ Quantum Algorithm Description
 
-The quantum simulation pipeline in `app/quantum.py` utilizes **Multi-Qubit GHZ (Greenberger–Horne–Zeilinger) Entanglement** and rotation gates to construct a joint decision space:
+The quantum simulation pipeline in `app/quantum.py` supports two distinct quantum entanglement protocols based on the requested `simulation_mode`:
 
+### 1. Equilibrium Mode (`simulation_mode: "equilibrium"`) — GHZ State
 1. **State Initialization**: For $N$ players ($N \le 5$), an $N$-qubit register $|00\dots 0\rangle$ and classical readout register are initialized.
 2. **Entanglement Preparation**: 
    - A Hadamard gate $H$ is applied to qubit 0: $H|0\rangle = \frac{1}{\sqrt{2}}(|0\rangle + |1\rangle)$.
    - Cascaded Controlled-NOT ($CNOT$) gates entangle qubit 0 with all subsequent qubits $i \in \{1, \dots, N-1\}$, producing a maximally entangled $N$-qubit GHZ state:
      $$\psi_{GHZ} = \frac{1}{\sqrt{2}}\left(|00\dots 0\rangle + |11\dots 1\rangle\right)$$
-3. **Gate Rationale & Purpose**:
-   - **Hadamard Gate ($H$)**: Placed on the first qubit to create an equal superposition of $|0\rangle$ and $|1\rangle$. This removes deterministic bias, allowing the first player to explore all possible strategic choices simultaneously.
-   - **Controlled-NOT Gates ($CNOT$)**: Links qubit 0 as the control to every other player's qubit as targets. This creates strong quantum entanglement across all players, guaranteeing that their decision states become physically correlated rather than statistically independent.
-   - **Strategy Rotation Gates ($R_x$)**: Applies a continuous $X$-axis rotation ($\pi/2$) to each qubit, transforming pure classical choices into quantum strategy superpositions that allow players to access non-classical equilibria.
-4. **Quantum Strategy Operator**: Each player's action choice is mapped to a single-qubit strategy operator $R_x(\theta)$ (a rotation around the X-axis by $\theta = \pi/2$), introducing quantum superpositions of strategies:
-   $$R_x(\pi/2) = \begin{bmatrix} \frac{1}{\sqrt{2}} & -\frac{i}{\sqrt{2}} \\ -\frac{i}{\sqrt{2}} & \frac{1}{\sqrt{2}} \end{bmatrix}$$
-5. **Measurement & Execution**: The circuit is measured into $N$ classical bits over 1,024 shots on Qiskit's `AerSimulator`, returning measurement frequency distributions and identifying dominant joint strategy bitstrings.
+
+### 2. Winning Mode (`simulation_mode: "winning"`) — W State
+1. **W-State Construction**: Generates a balanced $N$-qubit W-state using parameterized $R_y$ and Controlled-$R_y$ ($CRY$) rotations:
+   $$|W_N\rangle = \frac{1}{\sqrt{N}}\left(|100\dots 0\rangle + |010\dots 0\rangle + \dots + |000\dots 1\rangle\right)$$
+   - **Qubit 0 Initial Rotation**: $\theta_0 = 2 \arccos\left(\sqrt{\frac{N-1}{N}}\right)$
+   - **Cascaded Controlled Rotations**: $\theta_i = 2 \arccos\left(\sqrt{\frac{rem-1}{rem}}\right)$ with CNOT entanglement across adjacent qubits.
+2. **Strategic Winning Matrix Output**: The LLM analyzes the single-excitation superposition to output a Strategic Winning Matrix Table detailing targeted binary winning states (exactly one `'1'`), exact local strategy rotation angles ($\theta$), winner vs. non-winner payoffs, and blackout avoidance mechanisms.
+
+### 3. Gate Rationale & Purpose
+- **Hadamard Gate ($H$)**: Placed on the first qubit to create an equal superposition of $|0\rangle$ and $|1\rangle$, removing deterministic bias.
+- **Controlled-NOT Gates ($CNOT$)**: Links qubits to establish non-local entanglement across all players.
+- **Parameterized Rotations ($R_y$ / $CRY$)**: Precisely splits amplitude weight among remaining unassigned qubits to construct balanced W-states.
+- **Strategy Rotation Gates ($R_x$)**: Applies $X$-axis rotation ($\pi/2$) to each qubit, mapping classical choices into quantum superpositions.
 
 ---
 
@@ -77,7 +86,7 @@ The quantum simulation pipeline in `app/quantum.py` utilizes **Multi-Qubit GHZ (
 
 ### How to Compare Results in the App:
 1. **Classical Baseline**: Inspect the `classical_schema` table in the generated report to locate the traditional Nash Equilibrium (where no player can unilaterally improve their payoff).
-2. **Quantum Outcome**: Observe the `dominant_strategy_binary` from the Qiskit execution counts. Note how non-zero off-diagonal state amplitudes in the GHZ state allow players to access Pareto-superior payoff outcomes unreachable in classical un-correlated play.
+2. **Quantum Outcome**: Observe the `dominant_strategy_binary` from the Qiskit execution counts. Note how non-zero off-diagonal state amplitudes in the GHZ or W state allow players to access Pareto-superior payoff outcomes unreachable in classical un-correlated play.
 
 ---
 
@@ -86,7 +95,7 @@ The quantum simulation pipeline in `app/quantum.py` utilizes **Multi-Qubit GHZ (
 ### Prerequisites
 
 - Python 3.9+
-- OpenRouter API Key
+- API Key for OpenRouter, Google AI Studio, or OpenAI
 
 ### Installation
 
@@ -138,13 +147,15 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 - `api_key` *(string, required)*: API key for the chosen AI provider.
 - `provider` *(string, optional)*: `"OpenRouter"` (default), `"Google AI Studio"`, or `"OpenAI"`.
 - `model` *(string, optional)*: Model override name (e.g., `gpt-4o`, `gemini-1.5-pro`).
+- `simulation_mode` *(string, optional)*: `"equilibrium"` (default, GHZ state) or `"winning"` (W state).
 
 ```json
 {
   "text": "Two prisoners are arrested for a crime...",
   "api_key": "sk-or-v1-...",
   "provider": "OpenRouter",
-  "model": ""
+  "model": "",
+  "simulation_mode": "equilibrium"
 }
 ```
 
@@ -161,7 +172,8 @@ const analyzeGame = async () => {
     body: JSON.stringify({
       text: "Two criminals are arrested by the police...",
       api_key: "sk-or-v1-...",
-      provider: "OpenRouter" // "OpenRouter" | "Google AI Studio" | "OpenAI"
+      provider: "OpenRouter", // "OpenRouter" | "Google AI Studio" | "OpenAI"
+      simulation_mode: "winning" // "equilibrium" | "winning"
     })
   });
 
@@ -178,7 +190,8 @@ curl -X POST "https://your-app.up.railway.app/analyze_game" \
   -d '{
     "text": "Two suspects are arrested for a robbery...",
     "api_key": "sk-or-v1-...",
-    "provider": "OpenRouter"
+    "provider": "OpenRouter",
+    "simulation_mode": "winning"
   }'
 ```
 
@@ -191,7 +204,8 @@ response = requests.post(
     json={
         "text": "Two criminals are arrested by police...",
         "api_key": "sk-or-v1-...",
-        "provider": "OpenRouter"
+        "provider": "OpenRouter",
+        "simulation_mode": "equilibrium"
     }
 )
 data = response.json()
@@ -210,10 +224,11 @@ print(data["markdown_response"])
       "narrative_context": "..."
     },
     "quantum_results": {
+      "simulation_mode": "equilibrium",
       "quantum_counts": {"00": 512, "11": 512},
       "dominant_strategy_binary": "00",
       "total_shots": 1024,
-      "entanglement_type": "2-qubit GHZ state"
+      "entanglement_type": "2-qubit GHZ state (Equilibrium Mode)"
     }
   }
 }
@@ -233,11 +248,14 @@ quantum-gametheory/
 ├── app/
 │   ├── __init__.py
 │   ├── schemas.py       # Pydantic models (Player, GameTheorySchema, GameRequest, GameResponse)
-│   ├── ai.py            # OpenRouter parsing and Markdown insight generation
-│   ├── quantum.py       # Qiskit GHZ state entanglement simulation
-│   ├── core.py          # Application workflow logic
-│   └── main.py          # FastAPI application & Gradio UI mount
+│   ├── ai.py            # Multi-provider LLM parsing (OpenRouter, Gemini, OpenAI) and insight prompt dispatch
+│   ├── quantum.py       # Qiskit simulation routines (GHZ state & W-state circuits with lazy imports)
+│   ├── core.py          # Core workflow orchestration logic
+│   └── main.py          # FastAPI server, CORS middleware, and Gradio UI mount
 ├── requirements.txt     # Python dependencies
+├── railway.toml         # Railway Nixpacks deployment configuration
+├── Dockerfile           # Production container build specification
+├── start.sh             # Executable startup script with dynamic port binding
 ├── PYTHON_PACKAGE.md    # Packaging roadmap & Python SDK specifications
 └── README.md            # Project overview & documentation
 ```
