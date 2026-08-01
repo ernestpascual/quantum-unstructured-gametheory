@@ -224,7 +224,7 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
        - **How Quantum Interference Prevents Defection Traps**: Explain in plain language how destructive quantum interference cancels out classical betrayal/defection states.
        - **Why it is the Best Outcome**: Compare the EWL quantum payoff against the classical Nash equilibrium to show why this outcome is optimal for all players (achieving Pareto optimality).
     
-    Do not output JSON, only return raw Markdown text with valid LaTeX for math symbols (e.g. $J = e^{{i \\gamma/2 X^{\\otimes N}}}$).
+    Do not output JSON, only return raw Markdown text with valid LaTeX for math symbols (e.g. $J = exp(i * gamma/2 * X^N)$).
     """
     
     return call_ai(
