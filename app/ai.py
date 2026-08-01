@@ -207,10 +207,12 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
        - **Players & Decisions**: Explicitly list all participating players (2 to 5) and ALL available action/decision choices for each player (up to 5 actions per player).
        - **Game Payoff Matrix**: Render a clear, comprehensive markdown table showing ALL joint action combinations and the resulting payoff vector for each player.
     
-    2. **Quantum Player Action Guide (Based strictly on W-State Simulation)**:
-       A clear bulleted list detailing for EACH player by name:
-       - **Optimal Quantum Action**: State the exact action name they should play based directly on the quantum measurement probabilities in `quantum_results`.
-       - **Quantum Goal & Payoff**: Explain in plain terms how the W-state entanglement leads to their victory and their exact quantum payoff reward.
+    2. **Quantum Player Action & Trait-Based Strategy Guide**:
+       A detailed, descriptive bulleted section for EACH player by name:
+       - **Player Characteristics & Strategic Persona**: Describe the player's role, incentives, risk profile, and strategic stance based on the scenario narrative.
+       - **Optimal Quantum Action**: State the exact action name they should play based directly on the quantum simulation result (`dominant_joint_action`).
+       - **Actionable Steps to Win**: Explicitly outline 2-3 concrete, practical steps/tactics this specific player must execute to secure victory and maximize payoff.
+       - **Quantum Goal & Payoff**: Explain how their tailored action leverages W-state entanglement to guarantee a win while avoiding destructive collisions.
     
     3. **Strategic W-State Matrix Table**: A clean markdown table presenting:
        - **Player Name**: Name of the player.
@@ -248,11 +250,18 @@ def generate_quantum_insights(api_key: str, schema: GameTheorySchema, quantum_re
        - **Players & Decisions**: Explicitly list all participating players (2 to 5) and ALL available action/decision choices for each player (up to 5 actions per player).
        - **Game Payoff Matrix**: Render a clear, comprehensive markdown table showing ALL joint action combinations and the resulting payoff vector for each player.
     
-    2. **EWL Quantum Strategy & Probability Analysis**:
+    2. **Quantum Player Action & Trait-Based Strategy Guide**:
+       A detailed, descriptive bulleted section for EACH player by name:
+       - **Player Characteristics & Strategic Persona**: Describe the player's role, incentives, risk profile, and strategic stance based on the scenario narrative.
+       - **Optimal Quantum Action**: State the exact action name they should play based directly on the EWL quantum measurement result (`dominant_joint_action`).
+       - **Actionable Steps to Win**: Explicitly outline 2-3 concrete, practical steps/tactics this specific player must execute to secure victory and maximize payoff.
+       - **Quantum Goal & Payoff**: Explain how their tailored action leverages EWL phase entanglement to eliminate defection traps.
+    
+    3. **EWL Quantum Strategy & Probability Analysis**:
        - Render a markdown table for the Quantum Measurement Probability Map & Strategy Distribution.
        - **CRITICAL**: In the Joint Action / Strategy column, explicitly label WHICH player executes each specific action (e.g. `Alice: Cooperate, Bob: Defect` or `Player 1: Bid High, Player 2: Pass`). Base the dominant joint action solely on the highest measured quantum probability.
     
-    3. **Quantum Nash Equilibrium & Insights**: 
+    4. **Quantum Nash Equilibrium & Insights**: 
        Explain this section in simple, intuitive terms by breaking it down into 3 clear subsections:
        - **Quantum Nash Equilibrium**: Identify the true Quantum Nash Equilibrium driven strictly by the EWL quantum protocol ($J \\to U_1 \\otimes \\dots \\otimes U_n \\to J^\\dagger$).
        - **How Destructive Quantum Interference Works**: Explain in plain language how destructive quantum phase interference eliminates bad states.
