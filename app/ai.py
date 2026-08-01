@@ -131,15 +131,19 @@ def call_ai(provider: str, api_key: str, messages: list, model: str = None, resp
 def parse_game_scenario(api_key: str, text: str, provider: str = "OpenRouter", model: str = None) -> GameTheorySchema:
     json_schema_str = json.dumps(GameTheorySchema.model_json_schema(), indent=2)
     system_prompt = f"""
-    You are an expert game theory parser. Analyze the user's text and extract it into the following JSON schema:
+    You are an expert game theory parser specializing in multi-actor, multi-choice strategic games.
+    Analyze the user's text and extract it into the following JSON schema:
 
     {json_schema_str}
 
-    Instructions:
-    - Extract 2 to 5 players.
-    - Each player can have anywhere from 2 to 5 distinct actions/strategies.
-    - Populate the payoff_matrix mapping every joint action combination (comma-separated string matching player order, e.g., 'Action1, Action2') to a list of float payoffs for each player.
-    - If the text does not describe a scenario involving actors, strategies, and payoffs, set 'is_game_theory' to false, set 'players' to [], set 'payoff_matrix' to {{}}, and 'narrative_context' to 'Not game theory'.
+    CRITICAL PARSING RULES:
+    1. **Dynamic Player Capacity**: Extract between 2 and 5 players (`players` array size must be 2 to 5).
+    2. **Multi-Action Options**: Each player can have anywhere from 2 to 5 distinct action choices (e.g. ['Cooperate', 'Defect', 'Compromise']). Do NOT restrict to binary choices if 3, 4, or 5 choices are described.
+    3. **Complete Payoff Matrix**: Construct the `payoff_matrix` dictionary containing entries for EVERY joint action combination across all players.
+       - Keys must be formatted as comma-separated player action names matching player order (e.g., 'Action1, Action2' for 2 players, or 'ActionA, ActionB, ActionC' for 3 players).
+       - Values must be a JSON array of floats representing the payoffs for each player in that exact order (e.g., [1.0, 5.0] or [2.0, 0.0, -1.0]).
+    4. **Non-Game Fallback**: If the text does not describe a scenario involving actors, strategies, and payoffs, set 'is_game_theory' to false, 'players' to [], 'payoff_matrix' to {{}}, and 'narrative_context' to 'Not game theory'.
+
     Return ONLY valid JSON matching this schema.
     """
     
